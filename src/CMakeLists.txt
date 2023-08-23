@@ -1,6 +1,6 @@
 target_sources(odyssey PRIVATE
-    LibMessageStudio.cpp
-    LMS_Impl.cpp
-    LMS_Message.cpp
-    LMS_Project.cpp
+    LibMessageStudio.c
+    LMS_Impl.c
+    LMS_Message.c
+    LMS_Project.c
 )
