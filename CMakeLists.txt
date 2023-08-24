@@ -1,4 +1,4 @@
-project(LibMessageStudio CXX ASM)
+project(LibMessageStudio C ASM)
 
 add_library(LibMessageStudio OBJECT
   include/LMS_Impl.h
