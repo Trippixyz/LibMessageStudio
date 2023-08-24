@@ -158,7 +158,7 @@ LMS_ColorResult LMS_GetColor(LMS_ProjectBinary* prjBinary, s32 id, LMS_Color* ou
 {
     if (prjBinary->clr1Offset == -1) {
 
-        return LMS_ColorResult::NoColors;
+        return LMS_ColorResult_NoColors;
     }
 
     const char* colorData = prjBinary->common.blocks[prjBinary->clr1Offset].data;
@@ -167,7 +167,7 @@ LMS_ColorResult LMS_GetColor(LMS_ProjectBinary* prjBinary, s32 id, LMS_Color* ou
 
     if (id >= colorCount) {
         
-        return LMS_ColorResult::IndexOutOfRange;
+        return LMS_ColorResult_IndexOutOfRange;
     }
 
     colorData += (s64)id * 4;
@@ -177,7 +177,7 @@ LMS_ColorResult LMS_GetColor(LMS_ProjectBinary* prjBinary, s32 id, LMS_Color* ou
     output->b = colorData[6];
     output->a = colorData[7];
 
-    return LMS_ColorResult::ColorFound;
+    return LMS_ColorResult_ColorFound;
 }
 
 

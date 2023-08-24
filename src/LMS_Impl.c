@@ -1,12 +1,6 @@
 #include "LMS_Impl.h"
 #include "LMS_Mem.h"
 
-#include <cstddef>
-#include <cstring>
-#include <cwchar>
-
-#include <string.h>
-
 // matching
 s32 LMSi_GetHashTableIndexFromLabel(const char* label, u32 numSlots)
 {
@@ -56,9 +50,10 @@ LMS_BinaryBlock* LMSi_GetBlockInfoByName(LMS_Binary* binary, const char* name)
     return NULL;
 }
 
+// wip
 inline s32 LMSi_GetLabelIndexByName(LMS_BinaryBlock* binaryBlock, const char* name)
 {
-    
+    return 0;
 }
 
 // matching
@@ -73,7 +68,7 @@ void LMSi_AnalyzeMessageHeader(LMS_Binary* binary)
 {
     const char* data = binary->data;
 
-    binary->encoding = *(LMS_MessageEncoding*)&data[0x0C];
+    binary->encoding = *(u8*)&data[0x0C];
     binary->numBlocks = *(u16*)&data[0x0E];
 
     if (!binary->numBlocks) {

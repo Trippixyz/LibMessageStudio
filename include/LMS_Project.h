@@ -40,10 +40,10 @@ typedef struct
 
 typedef enum
 {
-    NoColors = -5,
-    ColorLabelNotFound = -2,
-    IndexOutOfRange = -1,
-    ColorFound
+    LMS_ColorResult_NoColors = -5,
+    LMS_ColorResult_ColorLabelNotFound = -2,
+    LMS_ColorResult_IndexOutOfRange = -1,
+    LMS_ColorResult_ColorFound
 } LMS_ColorResult;
 
 s32 LMS_GetColorNum(LMS_ProjectBinary* prjBinary);

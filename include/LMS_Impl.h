@@ -9,16 +9,16 @@ typedef struct LMS_BinaryBlock {
     u16 unk;
 } LMS_BinaryBlock;
 
-typedef enum LMS_MessageEncoding : u8 {
+enum LMS_MessageEncoding {
     LMS_MessageEncoding_UTF8,
     LMS_MessageEncoding_UTF16,
     LMS_MessageEncoding_UTF32
-} LMS_MessageEncoding;
+};
 
 typedef struct LMS_Binary {
     const char* data;
     u64 fileSize;
-    LMS_MessageEncoding encoding;
+    u8 encoding; // LMS_MessageEncoding
     char version;
     u16 numBlocks;
     LMS_BinaryBlock* blocks;
