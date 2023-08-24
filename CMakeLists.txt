@@ -1,6 +1,6 @@
 project(LibMessageStudio CXX ASM)
 
-add_library(NintendoSDK OBJECT
+add_library(LibMessageStudio OBJECT
   include/LMS_Impl.h
   include/LMS_Mem.h
   include/LMS_Message.h
