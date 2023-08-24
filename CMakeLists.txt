@@ -1,7 +1,5 @@
 project(LibMessageStudio CXX ASM)
 
-set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-
 add_library(NintendoSDK OBJECT
   include/LMS_Impl.h
   include/LMS_Mem.h
