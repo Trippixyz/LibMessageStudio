@@ -19,7 +19,10 @@ void LMS_CloseMessage(LMS_MessageBinary* msgBinary);
 
 s32 LMS_SearchMessageBlockByName(LMS_MessageBinary *msgBinary, const char* blockName);
 
-#pragma region Messages
+
+//////////////////////////////////////////////
+//                   Text                   //
+//////////////////////////////////////////////
 
 s32 LMS_GetTextNum(LMS_MessageBinary* msgBinary);
 
@@ -34,5 +37,3 @@ s32 LMS_GetTextIndexByLabel(LMS_MessageBinary* msgBinary, const char* label);
 
 const wchar_t* LMS_GetText(LMS_MessageBinary* msgBinary, s32 id);
 const wchar_t* LMS_GetTextByLabel(LMS_MessageBinary* msgBinary, const char* label);
-
-#pragma endregion
