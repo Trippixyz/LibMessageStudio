@@ -1,9 +1,5 @@
 #include "LMS_Project.h"
-#include "LibMessageStudio.h"
-#include "LMS_Impl.h"
-
-#include <cstddef>
-#include <cstring>
+#include "LMS_Mem.h"
 
 // matching
 LMS_ProjectBinary* LMS_InitProject(const void* data)

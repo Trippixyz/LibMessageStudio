@@ -1,7 +1,5 @@
 #include "LMS_Message.h"
-#include "LibMessageStudio.h"
-#include "LMS_Impl.h"
-#include "basis/seadTypes.h"
+#include "LMS_Mem.h"
 
 // matching
 LMS_MessageBinary* LMS_InitMessage(const void* data)

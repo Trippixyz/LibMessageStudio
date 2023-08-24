@@ -1,14 +1,9 @@
 #pragma once
 
-#include "LibMessageStudio/LibMessageStudio.h"
-#include <nn/types.h>
+#include "LMS_Impl.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-// STANDARD BINARY
-struct LMS_MessageBinary
+// MESSAGE BINARY
+typedef struct LMS_MessageBinary
 {
     LMS_Binary common;
     s32 lbl1Offset; // _20
@@ -17,7 +12,7 @@ struct LMS_MessageBinary
     s32 ato1Offset; // _2C
     s32 tsy1Offset; // _30
     // u32 _34;
-};
+} LMS_MessageBinary;
 
 LMS_MessageBinary* LMS_InitMessage(const void* data);
 void LMS_CloseMessage(LMS_MessageBinary* msgBinary);
@@ -41,7 +36,3 @@ const wchar_t* LMS_GetText(LMS_MessageBinary* msgBinary, s32 id);
 const wchar_t* LMS_GetTextByLabel(LMS_MessageBinary* msgBinary, const char* label);
 
 #pragma endregion
-
-#ifdef __cplusplus
-}
-#endif

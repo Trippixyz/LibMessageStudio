@@ -1,21 +1,42 @@
-#include <stdbool.h>
-#include <cstddef>
-#include <nn/types.h>
+#pragma once
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+#include "LMS_Types.h"
 
-typedef void* (*LMS_AllocFuncPtr)(u64 size); // TODO: u64 is prolly right parameter
-typedef void (*LMS_FreeFuncPtr)(void* ptr);
+typedef struct LMS_BinaryBlock {
+    const char* data;
+    char type[4];
+    u32 size;
+    u16 unk;
+} LMS_BinaryBlock;
 
-// memory
-void* LMSi_Malloc(size_t size);
-void LMSi_Free(void* ptr);
-void LMS_SetMemFuncs(LMS_AllocFuncPtr alloc_ptr, LMS_FreeFuncPtr free_ptr);
-s32 LMSi_MemCmp(const void* ptr1, const void* ptr2, s32 size);
-void LMSi_MemCopy(const void* dest, const void* src, s32 size);
+typedef enum LMS_MessageEncoding : u8 {
+    LMS_MessageEncoding_UTF8,
+    LMS_MessageEncoding_UTF16,
+    LMS_MessageEncoding_UTF32
+} LMS_MessageEncoding;
 
-#ifdef __cplusplus
-}
-#endif
+typedef struct LMS_Binary {
+    const char* data;
+    u64 fileSize;
+    LMS_MessageEncoding encoding;
+    char version;
+    u16 numBlocks;
+    LMS_BinaryBlock* blocks;
+} LMS_Binary;
+
+
+// hash table
+s32 LMSi_GetHashTableIndexFromLabel(const char* label, u32 numSlots);
+
+// block
+s32 LMSi_SearchBlockByName(LMS_Binary* binary, const char* blockName);
+LMS_BinaryBlock* LMSi_GetBlockInfoByName(LMS_Binary* binary, const char* name);
+
+// label
+inline s32 LMSi_GetLabelIndexByName(LMS_BinaryBlock* binaryBlock, const char* name); // TODO: make a proper inlined function
+
+// analyze
+void LMSi_AnalyzeMessageBinary(LMS_Binary* binary, const char* magic, u8 version);
+
+void LMSi_AnalyzeMessageHeader(LMS_Binary* binary);
+void LMSi_AnalyzeMessageBlocks(LMS_Binary* binary);

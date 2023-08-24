@@ -1,15 +1,9 @@
 #pragma once
 
-#include "LibMessageStudio/LibMessageStudio.h"
-#include "basis/seadTypes.h"
-#include <nn/types.h>
-
-#ifdef __cplusplus
-extern "C" {
-#endif
+#include "LMS_Impl.h"
 
 // PROJECT BINARY
-struct LMS_ProjectBinary
+typedef struct
 {
     LMS_Binary common;
     s32 clb1Offset; // _20
@@ -24,7 +18,7 @@ struct LMS_ProjectBinary
     s32 syl3Offset; // _44
     s32 slb1Offset; // _48
     s32 cti1Offset; // _4C
-};
+} LMS_ProjectBinary;
 
 LMS_ProjectBinary* LMS_InitProject(const void* data);
 void LMS_CloseProject(LMS_ProjectBinary* prjBinary);
@@ -36,21 +30,21 @@ s32 LMS_SearchProjectBlockByName(LMS_ProjectBinary *prjBinary, const char* block
 //                  Colors                  //
 //////////////////////////////////////////////
 
-struct LMS_Color
+typedef struct
 {
     u8 r;
     u8 g;
     u8 b;
     u8 a;
-};
+} LMS_Color;
 
-enum LMS_ColorResult
+typedef enum
 {
     NoColors = -5,
     ColorLabelNotFound = -2,
     IndexOutOfRange = -1,
     ColorFound
-};
+} LMS_ColorResult;
 
 s32 LMS_GetColorNum(LMS_ProjectBinary* prjBinary);
 
@@ -64,12 +58,12 @@ LMS_ColorResult LMS_GetColorByName(LMS_ProjectBinary* prjBinary, const char* nam
 //                Attributes                //
 //////////////////////////////////////////////
 
-struct LMS_AttrInfo
+typedef struct
 {
     s8 type;
     u16 listId;
     s32 offset;
-};
+} LMS_AttrInfo;
 
 // inlined
 LMS_AttrInfo* LMS_GetAttrInfo(LMS_ProjectBinary* prjBinary, s32 id);
@@ -98,10 +92,10 @@ u16 LMS_GetTagNum(LMS_ProjectBinary* prjBinary, u16 tagGroupId);
 const char* LMS_GetTagName(LMS_ProjectBinary* prjBinary, u16 tagGroupId, u16 tagId);
 
 // TagParam
-enum TagParamType
+typedef enum
 {
-
-};
+    Default
+} TagParamType;
 
 u16 LMS_GetTagParamNum(LMS_ProjectBinary* prjBinary, u16 tagGroupId, u16 tagId);
 const char* LMS_GetTagParamName(LMS_ProjectBinary* prjBinary, u16 tagGroupId, u16 tagId, u16 tagParamId);
@@ -116,13 +110,13 @@ const char* LMS_GetTagListItemName(LMS_ProjectBinary* prjBinary, u16 tagGroupId,
 //                  Styles                  //
 //////////////////////////////////////////////
 
-struct LMS_Style
+typedef struct
 {
     int regionWidth;
     int lineNum;
     int fontIndex;
     int baseColorIndex;
-};
+} LMS_Style;
 
 s32 LMS_GetStyleNum(LMS_ProjectBinary* prjBinary);
 
@@ -141,7 +135,3 @@ s32 LMS_GetBaseColorIndex(LMS_ProjectBinary* prjBinary, s32 id);
 s32 LMS_GetContentsNum(LMS_ProjectBinary* prjBinary);
 
 const char* LMS_GetContentPath(LMS_ProjectBinary* prjBinary, s32 id);
-
-#ifdef __cplusplus
-}
-#endif

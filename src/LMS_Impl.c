@@ -1,134 +1,117 @@
 #include "LMS_Impl.h"
+#include "LMS_Mem.h"
 
-static LMS_AllocFuncPtr LMSi_sAllocFuncPtr;
-static LMS_FreeFuncPtr LMSi_sFreeFuncPtr;
+#include <cstddef>
+#include <cstring>
+#include <cwchar>
 
-// matching
-__attribute__((noinline))
-void* LMSi_Malloc(size_t size)
-{
-    return LMSi_sAllocFuncPtr(size);
-}
+#include <string.h>
 
 // matching
-__attribute__((noinline))
-void LMSi_Free(void* ptr)
+s32 LMSi_GetHashTableIndexFromLabel(const char* label, u32 numSlots)
 {
-    LMSi_sFreeFuncPtr(ptr);
-}
+    char* curCharInLabel = (char*)label;
+    u32 hash = 0;
 
-// matching
-__attribute__((noinline))
-void LMS_SetMemFuncs(LMS_AllocFuncPtr alloc_ptr, LMS_FreeFuncPtr free_ptr)
-{
-    LMSi_sAllocFuncPtr = alloc_ptr;
-    LMSi_sFreeFuncPtr = free_ptr;
-}
+    while (*curCharInLabel != 0) {
 
-// matching
-__attribute__((noinline))
-s32 LMSi_MemCmp(const void* ptr1, const void* ptr2, s32 size)
-{
-    if (size < 1) {
-        return 1;
+        hash = hash * 0x492 + *curCharInLabel;
+
+        curCharInLabel++;
     }
 
-    const char* ptr1Char = (const char*)ptr1;
-    const char* ptr2Char = (const char*)ptr2;
-
-    for (int idIntoMem = 0; idIntoMem < size; idIntoMem++) {
-
-        if (ptr1Char[idIntoMem] != ptr2Char[idIntoMem]) {
-
-            return 0;
-        }
-    }
-
-    return 1;
+    return (hash & 0xFFFFFFFF) % numSlots;
 }
 
-// not matching
-__attribute__((noinline))
-void LMSi_MemCopy(const void* dest, const void* src, s32 size)
+// matching
+s32 LMSi_SearchBlockByName(LMS_Binary* binary, const char* blockName)
 {
-    char* destMem = (char*)dest;
-    char* srcMem = (char*)src;
+    u16 blocks = binary->numBlocks;
 
-    if (size > 0) {
+    for (u16 id = 0; id < blocks; id++) {
 
-        for (int i = 0; size; i++) {
-
-            destMem[i] = srcMem[i];
-            size--;
-        }
+        if (LMSi_MemCmp(binary->blocks[id].type, blockName, sizeof(binary->blocks[id].type)))
+            return id;
+        
+        blocks = binary->numBlocks;
     }
+
+    return -1;
 }
 
-/*
-    char* srcMem = (char*)src;
-    char* destMem = (char*)dest;
-    
-    if (size > 0) {
+// matching
+LMS_BinaryBlock* LMSi_GetBlockInfoByName(LMS_Binary* binary, const char* name)
+{
+    if (binary->numBlocks) {
 
-        u32 remainder = size & 3;
+        for (s32 i = 0; i < binary->numBlocks; i++) {
 
-        if (size - 1 >= 3) {
-            
+            if (LMSi_MemCmp(binary->blocks[i].type, name, sizeof(binary->blocks[i].type))) {
 
-            for (u32 memOffset = 0; size - remainder != memOffset;) {
-
-                destMem[0] = srcMem[0];
-                destMem[1] = srcMem[1];
-                destMem[2] = srcMem[2];
-                destMem[3] = srcMem[3];
-                memOffset += 4;
-
-                srcMem += 4;
-                destMem += 4;
+                return &binary->blocks[i];
             }
         }
     }
-*/
 
-/*
-void LMSi_MemCopy(const void* dest, const void* src, s32 size)
+    return NULL;
+}
+
+inline s32 LMSi_GetLabelIndexByName(LMS_BinaryBlock* binaryBlock, const char* name)
 {
-    if (!size) {
+    
+}
 
-        return;
+// matching
+void LMSi_AnalyzeMessageBinary(LMS_Binary* binary, const char* magic, u8 version)
+{
+    LMSi_AnalyzeMessageHeader(binary);
+    LMSi_AnalyzeMessageBlocks(binary);
+}
+
+// matching
+void LMSi_AnalyzeMessageHeader(LMS_Binary* binary)
+{
+    const char* data = binary->data;
+
+    binary->encoding = *(LMS_MessageEncoding*)&data[0x0C];
+    binary->numBlocks = *(u16*)&data[0x0E];
+
+    if (!binary->numBlocks) {
+
+        binary->blocks = NULL;
+    }
+    else {
+
+        binary->blocks = (LMS_BinaryBlock*)LMSi_Malloc(binary->numBlocks * sizeof(LMS_BinaryBlock));
     }
 
-    if (size - 1 < 3) {
+    binary->fileSize = *(u32*)&binary->data[0x12];
+}
 
-        return;
-    }
+// matching
+void LMSi_AnalyzeMessageBlocks(LMS_Binary* binary) {
 
-    s32 sizeRounded = size & 3;
+    u64 curBlockDataOffset = 0x20;
 
-    int IdIntoMem;
-    for (IdIntoMem = 0; size - sizeRounded != IdIntoMem; IdIntoMem += 4) {
+    for (s64 curBlockId = 0; curBlockId < binary->numBlocks; curBlockId++) {
 
-        char* curSrcPtr = ((char*)src) + IdIntoMem;
-        char* curDestPtr = ((char*)dest) + IdIntoMem;
+        LMS_BinaryBlock* curBlock = &binary->blocks[curBlockId];
 
-        curDestPtr[-1] = curSrcPtr[-1];
-        curDestPtr[0] = curSrcPtr[0];
-        curDestPtr[1] = curSrcPtr[1];
-        curDestPtr[2] = curSrcPtr[2];
-    }
+        const char* blockData = &binary->data[curBlockDataOffset + 0x10];
 
-    if (sizeRounded != 0) {
+        curBlock->data = blockData;
 
-        char* curSrcPtr = ((char*)src) + IdIntoMem;
-        char* curDestPtr = ((char*)dest) + IdIntoMem;
+        // Read block type.
+        curBlock->type[0] = binary->data[curBlockDataOffset + 0];
+        curBlock->type[1] = binary->data[curBlockDataOffset | 1];
+        curBlock->type[2] = binary->data[(curBlockDataOffset | 1)+1];
+        curBlock->type[3] = binary->data[curBlockDataOffset | 3];
 
-        for (int i = -sizeRounded; i != 0; i++) {
+        u32 curBlockSize = *(u32*)&binary->data[(curBlockDataOffset | 3)+1];
+        curBlock->size = curBlockSize;
+        curBlock->unk = *(u16*)&binary->data[(curBlockDataOffset | 3)+5];
+        
 
-            curSrcPtr[0] = curDestPtr[0];
-
-            curSrcPtr++;
-            curDestPtr++;
-        }
+        curBlockDataOffset = (curBlockDataOffset + curBlockSize + 0x1f) & ~0xf;
     }
 }
-*/
