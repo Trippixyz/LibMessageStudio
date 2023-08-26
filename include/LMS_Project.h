@@ -69,7 +69,7 @@ typedef struct
 LMS_AttrInfo* LMS_GetAttrInfo(LMS_ProjectBinary* prjBinary, s32 id);
 s32 LMS_GetAttrInfoIndexByName(LMS_ProjectBinary* prjBinary,char* name);
 
-s8 LMS_GetAttrType(LMS_ProjectBinary* prjBinary, s32 id);
+u8 LMS_GetAttrType(LMS_ProjectBinary* prjBinary, s32 id);
 
 s32 LMS_GetAttrOffset(LMS_ProjectBinary* prjBinary, s32 id);
 
