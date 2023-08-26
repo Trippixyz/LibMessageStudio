@@ -1,6 +1,6 @@
 #pragma once
 
-#include "LMS_Types.h"
+#include "types.h"
 
 typedef struct LMS_BinaryBlock {
     const char* data;

@@ -1,6 +1,6 @@
-#include "LMS_Project.h"
-#include "LMS_Impl.h"
-#include "LMS_Mem.h"
+#include "projfile.h"
+
+#include "libms.h"
 
 // matching
 LMS_ProjectBinary* LMS_InitProject(const void* data)
@@ -75,12 +75,34 @@ s32 LMS_GetColorIndexByName(LMS_ProjectBinary* prjBinary, const char* name)
     LMS_BinaryBlock* clb1Block = &prjBinary->common.blocks[prjBinary->clb1Offset];
 
     const char* clb1Data = clb1Block->data;
+    u32* hashTableData = (u32*)clb1Block->data;
 
-    s32 hashTableID = LMSi_GetHashTableIndexFromLabel(name, *(u32*)clb1Data);
+    s32 hashTableID = LMSi_GetHashTableIndexFromLabel(name, *clb1Data);
 
-    s32 hashOffset = 2 * hashTableID;
+    //s32 hashOffset = 2 * hashTableID;
 
-    
+    u32 labelCount = hashTableData[hashTableID * 2 + 1];
+    u32 labelOffset = hashTableData[hashTableID * 2 + 2];
+
+    while (1) {
+
+        if (labelCount == 0) {
+
+            return -1;
+        }
+
+        u32 size = (u32)*(u8*)&clb1Data[labelOffset];
+
+        if (size == nameLength && LMSi_MemCmp(name, &clb1Data[labelOffset + 1], size) != 0) {
+
+            break;
+        }
+
+        labelCount--;
+        labelOffset += size + 5;
+    }
+
+    return -1;
 
     /*
     if (prjBinary->clb1Offset == -1) {
@@ -230,19 +252,17 @@ LMS_AttrInfo* LMS_GetAttrInfo(LMS_ProjectBinary* prjBinary, s32 id)
     return NULL;
 }
 
-// not matching
-u8 LMS_GetAttrType(LMS_ProjectBinary* prjBinary, s32 id)
+// matching
+LMS_AttrType LMS_GetAttrType(LMS_ProjectBinary* prjBinary, s32 id)
 {
     LMS_AttrInfo* attrInfo = LMS_GetAttrInfo(prjBinary, id);
 
     if (!attrInfo) {
 
-        return -1;
+        return (u8)-1;
     }
-    
-    s8 type = attrInfo->type;
 
-    return type;
+    return attrInfo->type;
 }
 
 // matching

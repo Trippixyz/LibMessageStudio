@@ -1,5 +1,6 @@
-#include "LMS_Impl.h"
-#include "LMS_Mem.h"
+#include "commonbin.h"
+
+#include "libms.h"
 
 // matching
 s32 LMSi_GetHashTableIndexFromLabel(const char* label, u32 numSlots)

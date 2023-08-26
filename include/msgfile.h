@@ -1,6 +1,6 @@
 #pragma once
 
-#include "LMS_Impl.h"
+#include "commonbin.h"
 
 // MESSAGE BINARY
 typedef struct LMS_MessageBinary

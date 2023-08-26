@@ -1,4 +1,4 @@
-#include "LMS_Mem.h"
+#include "libms.h"
 
 static LMS_AllocFuncPtr LMSi_sAllocFuncPtr;
 static LMS_FreeFuncPtr LMSi_sFreeFuncPtr;

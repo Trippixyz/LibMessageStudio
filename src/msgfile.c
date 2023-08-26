@@ -1,5 +1,6 @@
-#include "LMS_Message.h"
-#include "LMS_Mem.h"
+#include "msgfile.h"
+
+#include "libms.h"
 
 // matching
 LMS_MessageBinary* LMS_InitMessage(const void* data)
@@ -79,6 +80,70 @@ s32 LMS_GetTextSize(LMS_MessageBinary* msgBinary, s32 id)
 
 s32 LMS_GetTextIndexByLabel(LMS_MessageBinary* msgBinary, const char* label)
 {
+    if (msgBinary->lbl1Offset == -1) {
+        
+        return -2;
+    }
+
+    s32 nameLength = 0;
+    while (label[nameLength++]);
+
+    LMS_BinaryBlock* lbl1Block = &msgBinary->common.blocks[msgBinary->lbl1Offset];
+
+    const char* lbl1Data = lbl1Block->data;
+    u32* hashTableData = (u32*)lbl1Block->data;
+
+    s32 hashTableID = LMSi_GetHashTableIndexFromLabel(label, *lbl1Data);
+
+    u32 labelCount = hashTableData[hashTableID * 2 + 1];
+    u32 labelOffset = hashTableData[hashTableID * 2 + 2];
+
+    if (labelCount == 0) {
+
+        return -1;
+    }
+
+    for (u32 i = 0; i <= labelCount; i++) {
+
+        u8 size = *(u8*)&lbl1Data[labelOffset];
+
+        if (size + 1 == nameLength) {
+
+            if (LMSi_MemCmp(label, &lbl1Data[labelOffset + 1], size) != 0) {
+
+                return *(s32*)&lbl1Data[labelOffset + size + 1];
+            }
+        }
+        
+        labelOffset += size + 5;
+    }
+    
+    return -1;
+
+    /*
+    while (1) {
+
+        if (labelCount == 0) {
+
+            return -1;
+        }
+
+        size = (u32)*(u8*)&lbl1Data[labelOffset];
+
+        if (size == nameLength && LMSi_MemCmp(label, &lbl1Data[labelOffset + 1], size) != 0) {
+
+            return *(s32*)&lbl1Data[labelOffset + size + 1];
+        }
+
+        labelCount--;
+        labelOffset += size + 5;
+    }
+
+    return -1;
+    */
+
+
+    /*
     if (msgBinary->lbl1Offset != -1) {
 
         s64 labelLength = 0;
@@ -96,6 +161,7 @@ s32 LMS_GetTextIndexByLabel(LMS_MessageBinary* msgBinary, const char* label)
         
     }
     return -2;
+    */
 }
 
 // matching
@@ -103,7 +169,7 @@ const wchar_t* LMS_GetText(LMS_MessageBinary* msgBinary, s32 id)
 {
     if (msgBinary->txt2Offset == -1) {
         
-        return NULL;
+        return (wchar_t*)0;
     }
 
     char *txt2Data = (char*)msgBinary->common.blocks[msgBinary->txt2Offset].data;
@@ -116,7 +182,7 @@ const wchar_t* LMS_GetText(LMS_MessageBinary* msgBinary, s32 id)
 
         return (wchar_t *)&txt2Data[textOffsetIntoTXT2];
     }
-    return NULL;
+    return (wchar_t*)0;
 }
 
 #pragma endregion

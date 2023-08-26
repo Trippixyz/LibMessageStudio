@@ -1,6 +1,6 @@
 #pragma once
 
-#include "LMS_Impl.h"
+#include "commonbin.h"
 
 // PROJECT BINARY
 typedef struct
@@ -65,11 +65,25 @@ typedef struct
     s32 offset;
 } LMS_AttrInfo;
 
+typedef enum
+{
+    LMS_AttrType_Uint8,
+    LMS_AttrType_Uint16,
+    LMS_AttrType_Uint32,
+    LMS_AttrType_Uint8_2,
+    LMS_AttrType_Uint16_2,
+    LMS_AttrType_Uint32_2,
+    LMS_AttrType_Float,
+    LMS_AttrType_Uint16_3,
+    LMS_AttrType_PrefixString_16,
+    LMS_AttrType_List
+} LMS_AttrType;
+
 // inlined
 LMS_AttrInfo* LMS_GetAttrInfo(LMS_ProjectBinary* prjBinary, s32 id);
 s32 LMS_GetAttrInfoIndexByName(LMS_ProjectBinary* prjBinary,char* name);
 
-u8 LMS_GetAttrType(LMS_ProjectBinary* prjBinary, s32 id);
+LMS_AttrType LMS_GetAttrType(LMS_ProjectBinary* prjBinary, s32 id);
 
 s32 LMS_GetAttrOffset(LMS_ProjectBinary* prjBinary, s32 id);
 

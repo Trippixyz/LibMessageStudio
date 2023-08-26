@@ -1,4 +1,4 @@
-#include "LMS_Types.h"
+#include "types.h"
 
 typedef void* (*LMS_AllocFuncPtr)(u64 size); // TODO: u64 is prolly right parameter
 typedef void (*LMS_FreeFuncPtr)(void* ptr);

@@ -1,16 +1,18 @@
 project(LibMessageStudio C ASM)
 
 add_library(LibMessageStudio OBJECT
-  include/LMS_Impl.h
-  include/LMS_Mem.h
-  include/LMS_Message.h
-  include/LMS_Project.h
-  include/LMS_Types.h
+  include/commonbin.h
+  include/libms.h
+  include/msgfile.h
+  include/projfile.h
+  include/flowchart.h
+  include/types.h
 
-  src/LMS_Impl.c
-  src/LMS_Mem.c
-  src/LMS_Message.c
-  src/LMS_Project.c
+  src/commonbin.c
+  src/libms.c
+  src/msgfile.c
+  src/projfile.c
+  src/flowchart.c
 )
 
 target_compile_options(LibMessageStudio PRIVATE -fno-exceptions)
