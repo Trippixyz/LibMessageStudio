@@ -3,7 +3,6 @@
 typedef void* (*LMS_AllocFuncPtr)(u64 size); // TODO: u64 is prolly right parameter
 typedef void (*LMS_FreeFuncPtr)(void* ptr);
 
-// memory
 void* LMSi_Malloc(size_t size);
 void LMSi_Free(void* ptr);
 void LMS_SetMemFuncs(LMS_AllocFuncPtr alloc_ptr, LMS_FreeFuncPtr free_ptr);
