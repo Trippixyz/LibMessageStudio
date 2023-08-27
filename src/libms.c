@@ -3,30 +3,22 @@
 static LMS_AllocFuncPtr LMSi_sAllocFuncPtr;
 static LMS_FreeFuncPtr LMSi_sFreeFuncPtr;
 
-// matching
-__attribute__((noinline))
 void* LMSi_Malloc(size_t size)
 {
     return LMSi_sAllocFuncPtr(size);
 }
 
-// matching
-__attribute__((noinline))
 void LMSi_Free(void* ptr)
 {
     LMSi_sFreeFuncPtr(ptr);
 }
 
-// matching
-__attribute__((noinline))
 void LMS_SetMemFuncs(LMS_AllocFuncPtr alloc_ptr, LMS_FreeFuncPtr free_ptr)
 {
     LMSi_sAllocFuncPtr = alloc_ptr;
     LMSi_sFreeFuncPtr = free_ptr;
 }
 
-// matching
-__attribute__((noinline))
 s32 LMSi_MemCmp(const void* ptr1, const void* ptr2, s32 size)
 {
     if (size < 1) {
@@ -47,8 +39,6 @@ s32 LMSi_MemCmp(const void* ptr1, const void* ptr2, s32 size)
     return 1;
 }
 
-// matching
-__attribute__((noinline))
 void LMSi_MemCopy(const void* dest, const void* src, s32 size)
 {
     for (int i = 0; i < size; i++)
