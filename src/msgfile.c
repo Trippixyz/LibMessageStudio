@@ -53,29 +53,113 @@ s32 LMS_GetTextNum(LMS_MessageBinary* msgBinary)
 // not matching
 s32 LMS_GetTextSize(LMS_MessageBinary* msgBinary, s32 id)
 {
-    if (msgBinary->txt2Offset != -1) {
+    if (msgBinary->txt2Offset == -1) {
+
+        return -1;
+    }
+    
+    s32* txt2DataIterator = (s32*)msgBinary->common.blocks[msgBinary->txt2Offset].data;
         
-        if (*(s32*)msgBinary->common.blocks[msgBinary->txt2Offset].data > id) {
+    if (txt2DataIterator[0] <= id) {
 
-            if (*(s32*)(msgBinary->common.blocks[msgBinary->txt2Offset].data + id * 0x4)) {
+        return -1;
+    }
 
-                switch (msgBinary->common.encoding)
-                {
-                    case LMS_MessageEncoding_UTF8:
-                        
-                        break;
-                    case LMS_MessageEncoding_UTF16:
-                        
-                        break;
-                    case LMS_MessageEncoding_UTF32:
-                        
-                        break;
+    txt2DataIterator = &txt2DataIterator[id + 1];
+
+    if (!*txt2DataIterator) {
+
+        return -1;
+    }
+
+    s32* addrIntoFile = txt2DataIterator;
+
+    switch (msgBinary->common.encoding)
+    {
+        case LMS_MessageEncoding_UTF8:
+        {
+            u8 curCharacter;
+
+            while (TRUE) {
+
+                curCharacter = *(u8*)addrIntoFile;
+
+                if (curCharacter == 0x0E) {
+
+                    addrIntoFile += *(u8*)&addrIntoFile[5] + 7;
+
+                    break;
                 }
+                else if (curCharacter == 0x0F) {
+
+                    addrIntoFile += 3;
+                }
+                else if (!curCharacter) {
+
+                    break;
+                }
+                    
+                addrIntoFile++;
             }
+            break;
+        }
+        case LMS_MessageEncoding_UTF16:
+        {
+            u16 curCharacter;
+
+            while (TRUE) {
+
+                curCharacter = *(u16*)addrIntoFile;
+
+                if (curCharacter == 0x0E) {
+
+                    addrIntoFile += *(u16*)&addrIntoFile[6] + 8;
+
+                    break;
+                }
+                else if (curCharacter == 0x0F) {
+
+                    addrIntoFile += 6;
+                }
+                else if (!curCharacter) {
+
+                    break;
+                }
+                    
+                addrIntoFile += 2;
+            }
+            break;
+        }
+        case LMS_MessageEncoding_UTF32:
+        {
+            u32 curCharacter;
+
+            while (TRUE) {
+
+                curCharacter = *(u32*)addrIntoFile;
+
+                if (curCharacter == 0x0E) {
+
+                    addrIntoFile += *(u32*)&addrIntoFile[8] + 10;
+
+                    break;
+                }
+                else if (curCharacter == 0x0F) {
+
+                    addrIntoFile += 6;
+                }
+                else if (!curCharacter) {
+
+                    break;
+                }
+                    
+                addrIntoFile += 4;
+            }
+            break;
         }
     }
 
-    return -1;
+    return (char*)addrIntoFile - (char*)txt2DataIterator;
 }
 
 s32 LMS_GetTextIndexByLabel(LMS_MessageBinary* msgBinary, const char* label)
