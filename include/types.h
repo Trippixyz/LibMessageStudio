@@ -1,6 +1,5 @@
 #include <stdint.h>
 #include <stddef.h>
-//#include <uchar.h>
 
 #define TRUE 1
 #define FALSE 0
