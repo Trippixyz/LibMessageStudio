@@ -1,5 +1,7 @@
 #pragma once
 
+#include <uchar.h>
+
 #include "commonbin.h"
 
 // MESSAGE BINARY
@@ -35,5 +37,5 @@ s32 LMS_GetTextStyleByLabel(LMS_MessageBinary* msgBinary, const char* label);
 
 s32 LMS_GetTextIndexByLabel(LMS_MessageBinary* msgBinary, const char* label);
 
-const wchar_t* LMS_GetText(LMS_MessageBinary* msgBinary, s32 id);
-const wchar_t* LMS_GetTextByLabel(LMS_MessageBinary* msgBinary, const char* label);
+const char16_t* LMS_GetText(LMS_MessageBinary* msgBinary, s32 id);
+const char16_t* LMS_GetTextByLabel(LMS_MessageBinary* msgBinary, const char* label);

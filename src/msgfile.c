@@ -249,11 +249,11 @@ s32 LMS_GetTextIndexByLabel(LMS_MessageBinary* msgBinary, const char* label)
 }
 
 // matching
-const wchar_t* LMS_GetText(LMS_MessageBinary* msgBinary, s32 id)
+const char16_t* LMS_GetText(LMS_MessageBinary* msgBinary, s32 id)
 {
     if (msgBinary->txt2Offset == -1) {
         
-        return (wchar_t*)0;
+        return (char16_t*)0;
     }
 
     char *txt2Data = (char*)msgBinary->common.blocks[msgBinary->txt2Offset].data;
@@ -264,9 +264,9 @@ const wchar_t* LMS_GetText(LMS_MessageBinary* msgBinary, s32 id)
 
         u32 textOffsetIntoTXT2 = ((u32*)txt2Data)[id + 1];
 
-        return (wchar_t *)&txt2Data[textOffsetIntoTXT2];
+        return (char16_t *)&txt2Data[textOffsetIntoTXT2];
     }
-    return (wchar_t*)0;
+    return (char16_t*)0;
 }
 
 #pragma endregion
