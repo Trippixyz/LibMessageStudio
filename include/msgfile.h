@@ -1,7 +1,5 @@
 #pragma once
 
-#include <uchar.h>
-
 #include "commonbin.h"
 
 // MESSAGE BINARY
