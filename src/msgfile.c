@@ -50,7 +50,7 @@ s32 LMS_GetTextNum(LMS_MessageBinary* msgBinary)
     return -1;
 }
 
-// not matching
+// not matching (functionally correct)
 s32 LMS_GetTextSize(LMS_MessageBinary* msgBinary, s32 id)
 {
     if (msgBinary->txt2Offset == -1) {
@@ -65,14 +65,14 @@ s32 LMS_GetTextSize(LMS_MessageBinary* msgBinary, s32 id)
         return -1;
     }
 
-    txt2DataIterator = &txt2DataIterator[id + 1];
+    txt2DataIterator += txt2DataIterator[id + 1] / 4;
 
     if (!*txt2DataIterator) {
 
         return -1;
     }
 
-    s32* addrIntoFile = txt2DataIterator;
+    u8* addrIntoFile = (u8*)txt2DataIterator;
 
     switch (msgBinary->common.encoding)
     {
@@ -115,7 +115,7 @@ s32 LMS_GetTextSize(LMS_MessageBinary* msgBinary, s32 id)
 
                     addrIntoFile += *(u16*)&addrIntoFile[6] + 8;
 
-                    break;
+                    continue;
                 }
                 else if (curCharacter == 0x0F) {
 
