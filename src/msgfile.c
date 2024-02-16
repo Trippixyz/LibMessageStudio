@@ -162,6 +162,30 @@ s32 LMS_GetTextSize(LMS_MessageBinary* msgBinary, s32 id)
     return (char*)addrIntoFile - (char*)txt2DataIterator;
 }
 
+// matching
+s32 LMS_GetTextStyle(LMS_MessageBinary* msgBinary, s32 id)
+{
+    if (msgBinary->tsy1Offset != -1) {
+
+        return *(s32*)&msgBinary->common.blocks[msgBinary->tsy1Offset].data[id * 4];
+    }
+
+    return -3;
+}
+
+// matching
+s32 LMS_GetTextStyleByLabel(LMS_MessageBinary* msgBinary, const char* label)
+{
+    s32 styleId = LMS_GetTextIndexByLabel(msgBinary, label);
+
+    if (styleId > -1) {
+
+        return LMS_GetTextStyle(msgBinary, styleId);
+    }
+
+    return styleId;
+}
+
 s32 LMS_GetTextIndexByLabel(LMS_MessageBinary* msgBinary, const char* label)
 {
     if (msgBinary->lbl1Offset == -1) {
