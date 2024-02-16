@@ -17,6 +17,4 @@ typedef int64_t s64;
 typedef float f32;
 typedef double f64;
 
-typedef unsigned short char16_t;
-
 //typedef char16_t char16;
